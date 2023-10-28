@@ -35,7 +35,7 @@ main:
 
     # call fillArray
     move $a0, $s2 # size in $a0
-    move $a1, $s1 # array pointer in $a0
+    move $a1, $s1 # array pointer in $a1
     jal fillArray
 
     # call printArray
@@ -46,9 +46,7 @@ main:
     # call sort
     move $a0, $s2 # size in $a0
     move $a1, $s1 # array pointer in $a1
-    ### HIER SORT CALLEN
-
-
+    jal selectionsort
 
     # call printArray
     move $a0, $s2 # size in $a0
@@ -144,4 +142,64 @@ loop2:
     j loop2
 
 endLoop2:
+    jr $ra
+
+### Function for Selection sort
+selectionsort:
+    move $t0, $a1 # $t0 = array pointer
+    move $t1, $a0 # $t1 = size
+    li $t2, 0 # i = 0
+    subi $t3, $t1, 1 # $t3 = size - 1
+
+    ### Move boundary of unsorted subarrray one by one
+ss_for: 
+    bge $t2, $t3, ss_endFor # while i < size - 1
+
+    ### Find the minimum element in unsorted array
+    mul $t4, $t2, 4 # min_idx = i * 4 (offset)
+    add $t5, $t2, 1 # j = i + 1
+
+ss_find_for:
+    bge $t5, $t1, ss_find_endFor # while j < size
+
+    ### if arr[j] < arr[min_idx]
+    mul $t6, $t5, 4 # $t6 = j * 4 (offset)
+    # load values from array
+    add $s0, $t0, $t4 # $s0 = address of arr[min_idx]
+    lwc1 $f0, 0($s0) # arr[min_idx]
+    add $s1, $t0, $t6 # $s1 = address of arr[j]
+    lwc1 $f1, 0($s1) # arr[j]
+
+    c.lt.s $f0, $f1 # if arr[j] < arr[min_idx]
+    bc1f ss_find_false # if false jump to ss_find_false
+
+    move $t4, $t6 # min_idx = j (offset)
+
+ss_find_false: # just continiue
+
+    addi $t5, $t5, 1 # increment j
+    j ss_find_for
+
+ss_find_endFor:
+
+    ### Swap the found minimum element
+    mul $t7, $t2, 4 # $t7 = i * 4 (offset)
+    beq $t4, $t7, ss_swap_false # if min_idx == i skip
+
+    ### swap arr[min_idx] and arr[i]
+    # load values from array
+    add $s0, $t0, $t4 # $s0 = address of arr[min_idx]
+    lwc1 $f0, 0($s0) # arr[min_idx]
+    add $s1, $t0, $t7 # $s1 = address of arr[i]
+    lwc1 $f1, 0($s1) # arr[i]
+    #save values in array
+    swc1 $f0, 0($s1) # arr[i] = arr[min_idx]
+    swc1 $f1, 0($s0) # arr[min_idx] = arr[i]
+
+ss_swap_false:
+
+    addi $t2, $t2, 1 # increment i
+    j ss_for
+
+ss_endFor:
     jr $ra

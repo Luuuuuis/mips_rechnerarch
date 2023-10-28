@@ -94,12 +94,12 @@ loop:
     beq $t3, $zero, even # Wenn Rest 0 dann Grade sonst Ungrade
 
 odd:
-    lwc1 $f1, const1
+    lwc1 $f1, const1    # load 0.0
     sub.s $f0, $f1, $f0 # Negiere $f0
 even:
     ### / 2.0
-    lwc1 $f1, const3
-    div.s $f0, $f0, $f1
+    lwc1 $f1, const3    # load 2.0
+    div.s $f0, $f0, $f1 # div ergebnis / 2
 
 
     swc1 $f0, 0($a1) # save value at current index in array
@@ -124,9 +124,9 @@ printArray:
     li $t1, 0 # i = 0
 
 loop2:
-    bge $t1, $t0, endLoop2
+    bge $t1, $t0, endLoop2 # beendet loop wenn i > size ist
 
-    lwc1 $f0, 0($a1)
+    lwc1 $f0, 0($a1)    # get current number to print in $f0
 
     # print output
     mov.s $f12, $f0     # move output of f2c into $f12 input register

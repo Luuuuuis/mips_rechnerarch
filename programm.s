@@ -2,7 +2,7 @@
 .data
 
 sizePrompt: .asciiz "Enter the number of elements <size>: "
-arrayPrint: .asciiz "Array: \n"
+arrayPrint: .asciiz "\nArray: \n"
 spacePrint: .asciiz " "
 
 const1: .float +0.0
@@ -25,32 +25,32 @@ main:
     # get input via cli
     li $v0, 5   # read_int in $v0
     syscall
-    move $a0, $s2 # size in $a0
-    move $s2, $v0 # size in $s2
+    move $a0, $s2 # size in $a0 for sbrk
+    move $s5, $v0 # size in $s5
 
     # create array dynamic
     li $v0, 9 # sbrk address in $v0 (amount in $a0)
     syscall
-    move $s1, $v0 # array pointer in $s1
+    move $s6, $v0 # array pointer in $s6
 
     # call fillArray
-    move $a0, $s2 # size in $a0
-    move $a1, $s1 # array pointer in $a1
+    move $a0, $s5 # size in $a0
+    move $a1, $s6 # array pointer in $a1
     jal fillArray
 
     # call printArray
-    move $a0, $s2 # size in $a0
-    move $a1, $s1 # array pointer in $a1
+    move $a0, $s5 # size in $a0
+    move $a1, $s6 # array pointer in $a1
     jal printArray
 
     # call sort
-    move $a0, $s2 # size in $a0
-    move $a1, $s1 # array pointer in $a1
+    move $a0, $s5 # size in $a0
+    move $a1, $s6 # array pointer in $a1
     jal selectionsort
 
     # call printArray
-    move $a0, $s2 # size in $a0
-    move $a1, $s1 # array pointer in $a1
+    move $a0, $s5 # size in $a0
+    move $a1, $s6 # array pointer in $a1
     jal printArray
 
     # programm exit
@@ -68,16 +68,12 @@ fillArray:
     addi $a1, $a1, 4 # add 4 um nächsten speicher zu kriegen
     swc1 $f0, 0($a1)
 
-    lwc1 $f1, 0($a1)
-
     li $t0, 2   # i=2
-
 
 loop: 
     bge $t0, $a0, endLoop    # beendet loop wenn i > size ist
 
     ### (arr[i-1] + arr[i-2)
-
     addi $a1, $a1, 4 # go to next index in array
     subi $t2, $a1, 4 # $t1 - 4 um arr[i-1] zu kriegen
     lwc1 $f0, 0($t2) # arr[i-1]
@@ -90,11 +86,11 @@ loop:
     mfhi $t3 # Rest in $f1 schreiben
 
     beq $t3, $zero, even # Wenn Rest 0 dann Grade sonst Ungrade
-
 odd:
     lwc1 $f1, const1    # load 0.0
     sub.s $f0, $f1, $f0 # Negiere $f0
 even:
+
     ### / 2.0
     lwc1 $f1, const3    # load 2.0
     div.s $f0, $f0, $f1 # div ergebnis / 2
@@ -143,6 +139,9 @@ loop2:
 
 endLoop2:
     jr $ra
+
+
+
 
 ### Function for Selection sort
 selectionsort:

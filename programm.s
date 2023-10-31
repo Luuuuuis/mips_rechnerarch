@@ -164,10 +164,10 @@ ss_find_for:
     ### if arr[j] < arr[min_idx]
     mul $t6, $t5, 4 # $t6 = j * 4 (offset)
     # load values from array
-    add $s0, $t0, $t4 # $s0 = address of arr[min_idx]
-    lwc1 $f0, 0($s0) # arr[min_idx]
-    add $s1, $t0, $t6 # $s1 = address of arr[j]
-    lwc1 $f1, 0($s1) # arr[j]
+    add $t8, $t0, $t4 # $t8 = address of arr[min_idx]
+    lwc1 $f0, 0($t8) # arr[min_idx]
+    add $t9, $t0, $t6 # $t9 = address of arr[j]
+    lwc1 $f1, 0($t9) # arr[j]
 
     c.lt.s $f0, $f1 # if arr[j] < arr[min_idx]
     bc1f ss_find_false # if false jump to ss_find_false
@@ -187,13 +187,13 @@ ss_find_endFor:
 
     ### swap arr[min_idx] and arr[i]
     # load values from array
-    add $s0, $t0, $t4 # $s0 = address of arr[min_idx]
-    lwc1 $f0, 0($s0) # arr[min_idx]
-    add $s1, $t0, $t7 # $s1 = address of arr[i]
-    lwc1 $f1, 0($s1) # arr[i]
+    add $t8, $t0, $t4 # $t8 = address of arr[min_idx]
+    lwc1 $f0, 0($t8) # arr[min_idx]
+    add $t9, $t0, $t7 # $t9 = address of arr[i]
+    lwc1 $f1, 0($t9) # arr[i]
     #save values in array
-    swc1 $f0, 0($s1) # arr[i] = arr[min_idx]
-    swc1 $f1, 0($s0) # arr[min_idx] = arr[i]
+    swc1 $f0, 0($t9) # arr[i] = arr[min_idx]
+    swc1 $f1, 0($t8) # arr[min_idx] = arr[i]
 
 ss_swap_false:
 

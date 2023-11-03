@@ -1,3 +1,6 @@
+# Luis Bros (6896550)
+# Tim Klement (9979870)
+
 # data
 .data
 
@@ -25,32 +28,33 @@ main:
     # get input via cli
     li $v0, 5   # read_int in $v0
     syscall
-    move $a0, $s2 # size in $a0 for sbrk
-    move $s5, $v0 # size in $s5
+    move $a0, $v0 # size in $a0 for sbrk
+    move $s0, $v0 # size in $s0
 
     # create array dynamic
-    li $v0, 9 # sbrk address in $v0 (amount in $a0)
+    mul $a0, $a0, 4 # size * 4 as one word are 4 bytes in MIPS
+    li $v0, 9 # sbrk address in $v0 (number of bytes in $a0)
     syscall
-    move $s6, $v0 # array pointer in $s6
+    move $s1, $v0 # array pointer in $s1
 
     # call fillArray
-    move $a0, $s5 # size in $a0
-    move $a1, $s6 # array pointer in $a1
+    move $a0, $s0 # size in $a0
+    move $a1, $s1 # array pointer in $a1
     jal fillArray
 
     # call printArray
-    move $a0, $s5 # size in $a0
-    move $a1, $s6 # array pointer in $a1
+    move $a0, $s0 # size in $a0
+    move $a1, $s1 # array pointer in $a1
     jal printArray
 
     # call sort
-    move $a0, $s5 # size in $a0
-    move $a1, $s6 # array pointer in $a1
+    move $a0, $s0 # size in $a0
+    move $a1, $s1 # array pointer in $a1
     jal selectionsort
 
     # call printArray
-    move $a0, $s5 # size in $a0
-    move $a1, $s6 # array pointer in $a1
+    move $a0, $s0 # size in $a0
+    move $a1, $s1 # array pointer in $a1
     jal printArray
 
     # programm exit
@@ -58,7 +62,7 @@ main:
     syscall
 
 
-
+## Fill the array
 fillArray:
 
     lwc1 $f0, const1 # laden von +0.0
@@ -81,7 +85,7 @@ loop:
     lwc1 $f1, 0($t2) # arr[i-2]
     add.s $f0, $f0, $f1 # (arr[i-1] + arr[i-2)
 
-    ### pow(-1, i)
+    ### pow(-1, i) -> Ist negieren wenn i odd
     div $t3, $t0, 2 # i/2
     mfhi $t3 # Rest in $f1 schreiben
 
@@ -106,7 +110,7 @@ endLoop:
 
 
 
-
+## Print an array
 printArray:
     move $t0, $a0 # move size in $t0
 

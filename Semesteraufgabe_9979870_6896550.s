@@ -173,7 +173,7 @@ ss_find_for:
     add $t9, $t0, $t6 # $t9 = address of arr[j]
     lwc1 $f1, 0($t9) # arr[j]
 
-    c.lt.s $f0, $f1 # if arr[j] < arr[min_idx]
+    c.lt.s $f1, $f0 # if arr[j] < arr[min_idx]
     bc1f ss_find_false # if false jump to ss_find_false
 
     move $t4, $t6 # min_idx = j (offset)
